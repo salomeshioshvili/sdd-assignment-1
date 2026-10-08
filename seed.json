@@ -1,0 +1,80 @@
+{
+  "hackathons": [
+    {
+      "name": "Hack Wars: The Agentforce Strikes Back",
+      "location": "Gdańsk, Poland",
+      "mode": "in_person",
+      "start_date": "2026-10-30",
+      "end_date": "2026-10-30",
+      "application_deadline": "2026-10-30",
+      "status": "applied",
+      "travel_funded": true,
+      "notes": "Chosen October hackathon. Travel ticket approval submitted. Registration form had an error, so contacted organizer."
+    },
+    {
+      "name": "Junction Tech Renaissance",
+      "location": "Helsinki, Finland",
+      "mode": "in_person",
+      "start_date": "2026-10-13",
+      "end_date": "2026-10-16",
+      "application_deadline": null,
+      "status": "accepted",
+      "travel_funded": true,
+      "notes": "Confirmed spot. Travel and accommodation funding discussed."
+    },
+    {
+      "name": "Turin Hackathon",
+      "location": "Turin, Italy",
+      "mode": "in_person",
+      "start_date": "2026-10-10",
+      "end_date": "2026-10-10",
+      "application_deadline": null,
+      "status": "skipped",
+      "travel_funded": false,
+      "notes": "Accepted, but decided not to attend after comparing travel plans."
+    },
+    {
+      "name": "EPFL Hackathon",
+      "location": "Lausanne, Switzerland",
+      "mode": "in_person",
+      "start_date": "2026-10-11",
+      "end_date": "2026-10-12",
+      "application_deadline": null,
+      "status": "rejected",
+      "travel_funded": false,
+      "notes": "Applied and was rejected."
+    },
+    {
+      "name": "Sofia European Defense Tech Hackathon",
+      "location": "Sofia, Bulgaria",
+      "mode": "in_person",
+      "start_date": "2026-10-16",
+      "end_date": "2026-10-18",
+      "application_deadline": null,
+      "status": "interested",
+      "travel_funded": false,
+      "notes": "Considering attending, but university midterm timing is an important constraint."
+    },
+    {
+      "name": "AdventureX 2026",
+      "location": "Hangzhou, China",
+      "mode": "in_person",
+      "start_date": "2026-07-22",
+      "end_date": "2026-07-26",
+      "application_deadline": null,
+      "status": "attended",
+      "travel_funded": true,
+      "notes": "Participated as a hacker. Project: Sleep Inbox."
+    }
+  ],
+  "checklist_rules": [
+    {"condition_field": "always", "condition_value": "*", "item": "Laptop and charger"},
+    {"condition_field": "always", "condition_value": "*", "item": "Student ID"},
+    {"condition_field": "always", "condition_value": "*", "item": "Water bottle"},
+    {"condition_field": "mode", "condition_value": "in_person", "item": "Phone charger and power bank"},
+    {"condition_field": "mode", "condition_value": "in_person", "item": "Travel documents"},
+    {"condition_field": "mode", "condition_value": "in_person", "item": "Snacks"},
+    {"condition_field": "mode", "condition_value": "online", "item": "Stable internet and headset"},
+    {"condition_field": "mode", "condition_value": "online", "item": "Sync with teammates on tooling before kickoff"}
+  ]
+}
