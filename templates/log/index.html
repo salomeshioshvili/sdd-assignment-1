@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My hackathons</h1>
+{% if hackathons %}
+<table>
+  <thead>
+    <tr><th>Name</th><th>Where</th><th>Dates</th><th>Status</th><th>Apply by</th></tr>
+  </thead>
+  <tbody>
+  {% for h in hackathons %}
+    <tr>
+      <td><a href="{{ url_for('log.detail', hackathon_id=h.id) }}">{{ h.name }}</a></td>
+      <td>{{ h.location or "-" }}</td>
+      <td>{{ h.start_date }}{% if h.end_date != h.start_date %} to {{ h.end_date }}{% endif %}</td>
+      <td><span class="badge {{ h.status }}">{{ h.status }}</span></td>
+      <td>
+        {% if h.urgency in ("overdue", "urgent", "soon", "later") %}
+          <span class="urgency {{ h.urgency }}">{{ h.application_deadline }} ({{ h.urgency }})</span>
+        {% else %}-{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hackathons yet. <a href="{{ url_for('log.new_hackathon') }}">Add one</a>.</p>
+{% endif %}
+{% endblock %}

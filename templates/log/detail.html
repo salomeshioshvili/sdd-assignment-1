@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ h.name }}{% endblock %}
+{% block content %}
+<h1>{{ h.name }}</h1>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+<p>
+  <span class="badge {{ h.status }}">{{ h.status }}</span>
+  {{ h.mode }}{% if h.location %} in {{ h.location }}{% endif %}
+</p>
+<p>{{ h.start_date }}{% if h.end_date != h.start_date %} to {{ h.end_date }}{% endif %}</p>
+<p>Application deadline: {{ h.application_deadline or "none" }}</p>
+<p>Travel funded: {{ "yes" if h.travel_funded else "no" }}</p>
+{% if h.notes %}<p class="notes">{{ h.notes }}</p>{% endif %}
+
+<h2>Change status</h2>
+{% if next_statuses %}
+<form method="post" action="{{ url_for('log.update_status', hackathon_id=h.id) }}" class="inline">
+  <select name="status">
+    {% for s in next_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+  </select>
+  <button type="submit">Update</button>
+</form>
+{% else %}
+<p class="muted">This status is final.</p>
+{% endif %}
+
+<h2>Teammates</h2>
+{% if h.teammates %}
+<ul>{% for t in h.teammates %}<li>{{ t }}</li>{% endfor %}</ul>
+{% else %}
+<p class="muted">None yet.</p>
+{% endif %}
+<form method="post" action="{{ url_for('log.new_teammate', hackathon_id=h.id) }}" class="inline">
+  <input name="name" placeholder="Teammate name" required>
+  <button type="submit">Add teammate</button>
+</form>
+
+<h2>Projects</h2>
+{% for p in h.projects %}
+<div class="card">
+  <strong>{{ p.name }}</strong> <span class="badge">{{ p.result }}</span><br>
+  {% if p.technologies %}{{ p.technologies | join(", ") }}{% else %}no technologies listed{% endif %}
+</div>
+{% else %}
+<p class="muted">No projects yet.</p>
+{% endfor %}
+
+{% if h.status == "attended" %}
+<form method="post" action="{{ url_for('log.new_project', hackathon_id=h.id) }}">
+  <label>Project name <input name="name" required></label>
+  <label>Result
+    <select name="result">{% for r in results %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select>
+  </label>
+  <label>Technologies (comma separated) <input name="technologies" placeholder="Python, Flask"></label>
+  <button type="submit">Add project</button>
+</form>
+{% else %}
+<p class="muted">Projects can be added once the status is "attended".</p>
+{% endif %}
+{% endblock %}

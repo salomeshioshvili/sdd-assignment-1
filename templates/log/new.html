@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Add hackathon{% endblock %}
+{% block content %}
+<h1>Add hackathon</h1>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form method="post">
+  <label>Name <input name="name" value="{{ form.get('name', '') }}" required></label>
+  <label>Location <input name="location" value="{{ form.get('location', '') }}"></label>
+  <label>Mode
+    <select name="mode">
+      {% for m in modes %}
+        <option value="{{ m }}" {% if form.get('mode') == m %}selected{% endif %}>{{ m }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Start date <input type="date" name="start_date" value="{{ form.get('start_date', '') }}" required></label>
+  <label>End date <input type="date" name="end_date" value="{{ form.get('end_date', '') }}" required></label>
+  <label>Application deadline (optional)
+    <input type="date" name="application_deadline" value="{{ form.get('application_deadline', '') }}">
+  </label>
+  <label class="check">
+    <input type="checkbox" name="travel_funded" {% if form.get('travel_funded') %}checked{% endif %}> Travel funded
+  </label>
+  <label>Notes <textarea name="notes" rows="3">{{ form.get('notes', '') }}</textarea></label>
+  <button type="submit">Save</button>
+</form>
+{% endblock %}

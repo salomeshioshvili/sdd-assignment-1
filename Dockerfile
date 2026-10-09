@@ -124,6 +124,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 #  ignored, and the app you tested is not the app that runs (§7.11).
 # -----------------------------------------------------------------------------
 COPY app.py config.py db.py seed.json ./
+COPY log/ ./log/
+COPY templates/ ./templates/
+COPY static/ ./static/
 
 RUN chown -R appuser:appuser /app
 

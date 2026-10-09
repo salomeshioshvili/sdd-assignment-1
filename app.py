@@ -1,19 +1,13 @@
-from contextlib import closing
-from flask import Flask, jsonify
+from flask import Flask
 
 import config
 import db
+from log.routes import bp as log_bp
 
 def create_app() -> Flask:
     app = Flask(__name__)
     db.init_db()  # create missing tables and seed empty ones on every boot
-
-    @app.get("/")
-    def index():
-        with closing(db.get_connection()) as conn:
-            count = conn.execute("SELECT COUNT(*) FROM hackathons").fetchone()[0]
-        return jsonify(app="Hackathon Journal", status="ok", hackathons=count)
-
+    app.register_blueprint(log_bp)
     return app
 
 if __name__ == "__main__":
