@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Checklist: {{ h.name }}{% endblock %}
+{% block content %}
+<h1>Prep checklist</h1>
+<p>{{ h.name }} ({{ h.mode }})</p>
+<ul>{% for item in items %}<li>{{ item }}</li>{% endfor %}</ul>
+<p><a href="{{ url_for('insights.index') }}">Back to insights</a></p>
+{% endblock %}

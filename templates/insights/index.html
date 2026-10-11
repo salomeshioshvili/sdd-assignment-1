@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Insights{% endblock %}
+{% block content %}
+<h1>Insights</h1>
+
+<h2>Your numbers</h2>
+<div class="card">
+  Attended: {{ stats.attended }}<br>
+  Projects built: {{ stats.projects }}<br>
+  Hackathons with a winning project: {{ stats.won }}<br>
+  Win rate: {{ stats.win_rate_percent }}%
+</div>
+
+<h2>Most used technologies</h2>
+{% if stats.top_technologies %}
+<ul>{% for name, count in stats.top_technologies %}<li>{{ name }}: {{ count }}</li>{% endfor %}</ul>
+{% else %}
+<p class="muted">Add projects to attended hackathons to see this.</p>
+{% endif %}
+
+<h2>Most frequent teammates</h2>
+{% if stats.top_teammates %}
+<ul>{% for name, count in stats.top_teammates %}<li>{{ name }}: {{ count }}</li>{% endfor %}</ul>
+{% else %}
+<p class="muted">Add teammates to attended hackathons to see this.</p>
+{% endif %}
+
+<h2>Technologies you haven't used yet</h2>
+{% if gaps %}<p>{{ gaps | join(", ") }}</p>{% else %}<p class="muted">You've used them all.</p>{% endif %}
+
+<h2>Prep checklists</h2>
+{% if upcoming %}
+<ul>
+  {% for h in upcoming %}
+  <li><a href="{{ url_for('insights.checklist', hackathon_id=h.id) }}">{{ h.name }}</a> ({{ h.status }})</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">No upcoming hackathons.</p>
+{% endif %}
+
+<h2>Reflections</h2>
+<p><a href="{{ url_for('insights.new_reflection') }}">Write a reflection</a></p>
+{% for r in reflections %}
+<div class="card">
+  <strong>{{ r.hackathon_name }}</strong>
+  {% if r.went_well %}<br>Went well: {{ r.went_well }}{% endif %}
+  {% if r.went_badly %}<br>Went badly: {{ r.went_badly }}{% endif %}
+  {% if r.lesson %}<br>Lesson: {{ r.lesson }}{% endif %}
+</div>
+{% else %}
+<p class="muted">No reflections yet.</p>
+{% endfor %}
+{% endblock %}

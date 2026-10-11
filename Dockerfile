@@ -125,6 +125,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # -----------------------------------------------------------------------------
 COPY app.py config.py db.py seed.json ./
 COPY log/ ./log/
+COPY insights/ ./insights/
 COPY templates/ ./templates/
 COPY static/ ./static/
 

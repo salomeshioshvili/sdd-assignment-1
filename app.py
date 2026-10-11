@@ -2,12 +2,14 @@ from flask import Flask
 
 import config
 import db
+from insights.routes import bp as insights_bp
 from log.routes import bp as log_bp
 
 def create_app() -> Flask:
     app = Flask(__name__)
     db.init_db()  # create missing tables and seed empty ones on every boot
     app.register_blueprint(log_bp)
+    app.register_blueprint(insights_bp)
     return app
 
 if __name__ == "__main__":
