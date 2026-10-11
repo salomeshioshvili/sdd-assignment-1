@@ -15,3 +15,11 @@ Context: Assignment 2 splits the app into separate services, so the hackathon lo
 Decision: The log domain (log/) owns hackathons, projects, teammates and the status rules, and the insights domain (insights/) will own reflections, checklist rules and statistics. Insights reads log data only through log.service.list_hackathon_records(), which returns plain dictionaries keyed by hackathon id, and log never imports insights.
 Alternatives considered: One shared module holding every query, rejected because it hides which tables belong to which domain. Letting insights run its own joins on the log's tables, rejected because splitting later would mean rewriting those queries.
 Consequences: Only one read-only function and hackathon_id cross the seam, so Assignment 2 can turn that call into an API request. For now both domains still share one schema in db.py and one database file.
+
+## 3. Schema: join tables for many-to-many data and a single hackathon_id link between domains
+Date: 2026-10-11
+Status: Decided
+Context: A hackathon has many teammates and a project has many technologies, and the insights domain needs to count both. The insights tables must also refer to a hackathon without owning any of the log's data.
+Decision: Teammates and technologies live in join tables (hackathon_teammates and project_technologies) with composite primary keys, and the insights tables (reflections and checklist_rules) connect to the log only through hackathon_id. CHECK constraints on status, mode and result stop invalid values from being stored.
+Alternatives considered: Comma-separated names in a text column, rejected because every count would need string parsing and spelling clean-up. A single wide hackathons table with JSON columns, rejected because SQLite cannot enforce allowed values or foreign keys inside JSON.
+Consequences: Counting teammates and technologies becomes a plain query over rows, and each domain's tables could move to their own database with only hackathon_id to reconnect them. The cost is that CREATE TABLE IF NOT EXISTS never alters an existing table, so changing a column later needs a real migration.
