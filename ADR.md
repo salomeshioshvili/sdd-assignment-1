@@ -23,3 +23,11 @@ Context: A hackathon has many teammates and a project has many technologies, and
 Decision: Teammates and technologies live in join tables (hackathon_teammates and project_technologies) with composite primary keys, and the insights tables (reflections and checklist_rules) connect to the log only through hackathon_id. CHECK constraints on status, mode and result stop invalid values from being stored.
 Alternatives considered: Comma-separated names in a text column, rejected because every count would need string parsing and spelling clean-up. A single wide hackathons table with JSON columns, rejected because SQLite cannot enforce allowed values or foreign keys inside JSON.
 Consequences: Counting teammates and technologies becomes a plain query over rows, and each domain's tables could move to their own database with only hackathon_id to reconnect them. The cost is that CREATE TABLE IF NOT EXISTS never alters an existing table, so changing a column later needs a real migration.
+
+## 4. Testing approach: test the rules directly, leave routes thin
+Date: 2026-10-11
+Status: Decided
+Context: The 70% bar applies to the business logic of the two domains, and my code is split into pure rule functions and functions that use SQLite.
+Decision: I test log/service.py and insights/service.py directly with pytest, using an in-memory SQLite database built from the real schema for the database functions, and measure coverage only on those two packages, leaving out routes. I also test that booting twice keeps the seed data unchanged and keeps rows added later.
+Alternatives considered: Testing through Flask's test client, rejected because it exercises routing and templates instead of the rules and makes a failure harder to trace. Mocking the database, rejected because the SQL is part of the logic and an in-memory SQLite is just as fast.
+Consequences: Coverage is highest on the code I have to defend, but routes.py, the templates and app.py have no automated tests and are only checked by hand and with container/run.sh.
