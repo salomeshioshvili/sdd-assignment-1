@@ -1,0 +1,5 @@
+[run]
+source = log, insights
+omit =
+    */routes.py
+    */__init__.py
