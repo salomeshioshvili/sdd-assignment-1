@@ -1,23 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Write a reflection{% endblock %}
 {% block content %}
-<h1>Write a reflection</h1>
-{% if error %}<p class="error">{{ error }}</p>{% endif %}
-{% if attended %}
-<form method="post">
-  <label>Hackathon
-    <select name="hackathon_id">
-      {% for h in attended %}
-      <option value="{{ h.id }}" {% if form.get('hackathon_id') == h.id|string %}selected{% endif %}>{{ h.name }}</option>
-      {% endfor %}
-    </select>
-  </label>
-  <label>What went well <textarea name="went_well" rows="3">{{ form.get('went_well', '') }}</textarea></label>
-  <label>What went badly <textarea name="went_badly" rows="3">{{ form.get('went_badly', '') }}</textarea></label>
-  <label>Lesson for next time <textarea name="lesson" rows="3">{{ form.get('lesson', '') }}</textarea></label>
-  <button type="submit">Save</button>
-</form>
-{% else %}
-<p class="muted">You need an attended hackathon first.</p>
-{% endif %}
+<div class="panel content-panel">
+  <div class="page-head">
+    <p class="page-kicker">After action</p>
+    <h1>Write a <span class="highlight">reflection</span></h1>
+    <p class="page-lead">Capture the highs, the messes, and the lesson for next time.</p>
+  </div>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  {% if attended %}
+  <form method="post" class="form-panel">
+    <label>Hackathon
+      <select name="hackathon_id">
+        {% for h in attended %}
+        <option value="{{ h.id }}" {% if form.get('hackathon_id') == h.id|string %}selected{% endif %}>{{ h.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>What went well <textarea name="went_well" rows="3">{{ form.get('went_well', '') }}</textarea></label>
+    <label>What went badly <textarea name="went_badly" rows="3">{{ form.get('went_badly', '') }}</textarea></label>
+    <label>Lesson for next time <textarea name="lesson" rows="3">{{ form.get('lesson', '') }}</textarea></label>
+    <button type="submit">Save reflection</button>
+  </form>
+  {% else %}
+  <div class="empty-state">
+    <strong>Nothing to reflect on yet</strong>
+    <p class="muted">You need an attended hackathon first.</p>
+  </div>
+  {% endif %}
+</div>
 {% endblock %}

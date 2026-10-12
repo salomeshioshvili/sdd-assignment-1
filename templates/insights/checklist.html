@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Checklist: {{ h.name }}{% endblock %}
 {% block content %}
-<h1>Prep checklist</h1>
-<p>{{ h.name }} ({{ h.mode }})</p>
-<ul>{% for item in items %}<li>{{ item }}</li>{% endfor %}</ul>
-<p><a href="{{ url_for('insights.index') }}">Back to insights</a></p>
+<div class="panel content-panel">
+  <div class="page-head">
+    <p class="page-kicker">Prep list</p>
+    <h1>Checklist for <span class="highlight">{{ h.name }}</span></h1>
+    <p class="page-lead">{{ h.mode }} · tick these off before you ship.</p>
+  </div>
+  <ul class="check-list">{% for item in items %}<li>{{ item }}</li>{% endfor %}</ul>
+  <a class="back-link" href="{{ url_for('insights.index') }}">← Back to insights</a>
+</div>
 {% endblock %}

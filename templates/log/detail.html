@@ -1,61 +1,90 @@
 {% extends "base.html" %}
 {% block title %}{{ h.name }}{% endblock %}
 {% block content %}
-<h1>{{ h.name }}</h1>
-{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<div class="panel content-panel">
+  <div class="page-head">
+    <p class="page-kicker">Hackathon entry</p>
+    <div class="detail-header">
+      <h1>{{ h.name }}</h1>
+      <div class="detail-tags">
+        <span class="badge {{ h.status }}">{{ h.status }}</span>
+        <span class="muted">{{ h.mode }}{% if h.location %} · {{ h.location }}{% endif %}</span>
+      </div>
+    </div>
+  </div>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
 
-<p>
-  <span class="badge {{ h.status }}">{{ h.status }}</span>
-  {{ h.mode }}{% if h.location %} in {{ h.location }}{% endif %}
-</p>
-<p>{{ h.start_date }}{% if h.end_date != h.start_date %} to {{ h.end_date }}{% endif %}</p>
-<p>Application deadline: {{ h.application_deadline or "none" }}</p>
-<p>Travel funded: {{ "yes" if h.travel_funded else "no" }}</p>
-{% if h.notes %}<p class="notes">{{ h.notes }}</p>{% endif %}
+  <div class="meta-row">
+    <div class="meta-chip">
+      <span class="chip-label">When</span>
+      <strong>{{ h.start_date }}{% if h.end_date != h.start_date %} → {{ h.end_date }}{% endif %}</strong>
+    </div>
+    <div class="meta-chip">
+      <span class="chip-label">Apply by</span>
+      <strong>{{ h.application_deadline or "—" }}</strong>
+    </div>
+    <div class="meta-chip">
+      <span class="chip-label">Travel</span>
+      <strong>{{ "Funded" if h.travel_funded else "Not funded" }}</strong>
+    </div>
+  </div>
 
-<h2>Change status</h2>
-{% if next_statuses %}
-<form method="post" action="{{ url_for('log.update_status', hackathon_id=h.id) }}" class="inline">
-  <select name="status">
-    {% for s in next_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
-  </select>
-  <button type="submit">Update</button>
-</form>
-{% else %}
-<p class="muted">This status is final.</p>
-{% endif %}
+  {% if h.notes %}<p class="notes">{{ h.notes }}</p>{% endif %}
 
-<h2>Teammates</h2>
-{% if h.teammates %}
-<ul>{% for t in h.teammates %}<li>{{ t }}</li>{% endfor %}</ul>
-{% else %}
-<p class="muted">None yet.</p>
-{% endif %}
-<form method="post" action="{{ url_for('log.new_teammate', hackathon_id=h.id) }}" class="inline">
-  <input name="name" placeholder="Teammate name" required>
-  <button type="submit">Add teammate</button>
-</form>
+  <section class="section-block">
+    <h2><span class="label">Status</span>Change status</h2>
+    {% if next_statuses %}
+    <form method="post" action="{{ url_for('log.update_status', hackathon_id=h.id) }}" class="inline">
+      <select name="status">
+        {% for s in next_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+      </select>
+      <button type="submit">Update</button>
+    </form>
+    {% else %}
+    <p class="muted">This status is final.</p>
+    {% endif %}
+  </section>
 
-<h2>Projects</h2>
-{% for p in h.projects %}
-<div class="card">
-  <strong>{{ p.name }}</strong> <span class="badge">{{ p.result }}</span><br>
-  {% if p.technologies %}{{ p.technologies | join(", ") }}{% else %}no technologies listed{% endif %}
+  <section class="section-block">
+    <h2><span class="label">Crew</span>Teammates</h2>
+    {% if h.teammates %}
+    <ul class="team-list">{% for t in h.teammates %}<li>{{ t }}</li>{% endfor %}</ul>
+    {% else %}
+    <p class="muted">None yet.</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('log.new_teammate', hackathon_id=h.id) }}" class="inline">
+      <input name="name" placeholder="Teammate name" required>
+      <button type="submit">Add teammate</button>
+    </form>
+  </section>
+
+  <section class="section-block">
+    <h2><span class="label">Builds</span>Projects</h2>
+    {% for p in h.projects %}
+    <div class="card">
+      <strong>{{ p.name }}</strong> <span class="badge">{{ p.result }}</span>
+      <div class="project-tech">
+        {% if p.technologies %}{{ p.technologies | join(" · ") }}{% else %}no technologies listed{% endif %}
+      </div>
+    </div>
+    {% else %}
+    <p class="muted">No projects yet.</p>
+    {% endfor %}
+
+    {% if h.status == "attended" %}
+    <form method="post" action="{{ url_for('log.new_project', hackathon_id=h.id) }}" class="form-panel">
+      <label>Project name <input name="name" required></label>
+      <label>Result
+        <select name="result">{% for r in results %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select>
+      </label>
+      <label>Technologies (comma separated) <input name="technologies" placeholder="Python, Flask"></label>
+      <button type="submit">Add project</button>
+    </form>
+    {% else %}
+    <p class="muted">Projects can be added once the status is "attended".</p>
+    {% endif %}
+  </section>
+
+  <a class="back-link" href="{{ url_for('log.index') }}">← Back to dashboard</a>
 </div>
-{% else %}
-<p class="muted">No projects yet.</p>
-{% endfor %}
-
-{% if h.status == "attended" %}
-<form method="post" action="{{ url_for('log.new_project', hackathon_id=h.id) }}">
-  <label>Project name <input name="name" required></label>
-  <label>Result
-    <select name="result">{% for r in results %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select>
-  </label>
-  <label>Technologies (comma separated) <input name="technologies" placeholder="Python, Flask"></label>
-  <button type="submit">Add project</button>
-</form>
-{% else %}
-<p class="muted">Projects can be added once the status is "attended".</p>
-{% endif %}
 {% endblock %}
