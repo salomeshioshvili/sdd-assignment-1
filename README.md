@@ -65,15 +65,34 @@ On startup the app creates any missing tables and loads `seed.json` into a table
 ## Project layout
 
 ```
-app.py  config.py  db.py  seed.json  requirements.txt  Dockerfile
-log/          routes.py  service.py
-insights/     routes.py  service.py
-templates/    base.html  log/  insights/
-static/       styles.css  img/
-tests/        conftest.py  test_db.py  test_log_service.py  test_insights_service.py
-docs/         schema.md  architecture.md
-container/    run.sh
-ADR.md  AI_USAGE.md  pytest.ini  .coveragerc
+sdd-assignment-1/
+├── app.py                 # Flask entrypoint
+├── config.py              # PORT and DATA_DIR
+├── db.py                  # schema, connection, seed-if-empty
+├── seed.json
+├── requirements.txt
+├── Dockerfile
+├── ADR.md
+├── AI_USAGE.md
+├── log/                   # domain 1
+│   ├── routes.py
+│   └── service.py
+├── insights/              # domain 2
+│   ├── routes.py
+│   └── service.py
+├── templates/
+│   ├── base.html
+│   ├── log/
+│   └── insights/
+├── static/
+│   ├── styles.css
+│   └── img/
+├── tests/
+├── docs/
+│   ├── schema.md
+│   └── architecture.md
+└── container/
+    └── run.sh             # §7 contract checker
 ```
 
 ## Tests and coverage
