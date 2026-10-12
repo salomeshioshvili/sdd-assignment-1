@@ -12,7 +12,7 @@ Consequences: The code stays small and each request path is easy to follow, but 
 Date: 2026-10-09
 Status: Decided
 Context: Assignment 2 splits the app into separate services, so the hackathon log and the insights engine need a clear seam now. Both read and write one SQLite file.
-Decision: The log domain (log/) owns hackathons, projects, teammates and the status rules, and the insights domain (insights/) will own reflections, checklist rules and statistics. Insights reads log data only through log.service.list_hackathon_records(), which returns plain dictionaries keyed by hackathon id, and log never imports insights.
+Decision: The log domain (log/) owns hackathons, projects, teammates and the status rules, and the insights domain (insights/) will own reflections, checklist rules and statistics. Insights reads log data only through log.service.list_hackathon_records(), which returns a list of plain dictionaries (each including the hackathon id), and log never imports insights.
 Alternatives considered: One shared module holding every query, rejected because it hides which tables belong to which domain. Letting insights run its own joins on the log's tables, rejected because splitting later would mean rewriting those queries.
 Consequences: Only one read-only function and hackathon_id cross the seam, so Assignment 2 can turn that call into an API request. For now both domains still share one schema in db.py and one database file.
 
@@ -31,3 +31,11 @@ Context: The 70% bar applies to the business logic of the two domains, and my co
 Decision: I test log/service.py and insights/service.py directly with pytest, using an in-memory SQLite database built from the real schema for the database functions, and measure coverage only on those two packages, leaving out routes. I also test that booting twice keeps the seed data unchanged and keeps rows added later.
 Alternatives considered: Testing through Flask's test client, rejected because it exercises routing and templates instead of the rules and makes a failure harder to trace. Mocking the database, rejected because the SQL is part of the logic and an in-memory SQLite is just as fast.
 Consequences: Coverage is highest on the code I have to defend, but routes.py, the templates and app.py have no automated tests and are only checked by hand and with container/run.sh.
+
+## 5. Deliberately not built: authentication and multiple users
+Date: 2026-10-12
+Status: Decided
+Context: The journal is a personal tool for one student and holds no sensitive data, and the container contract needs the app to start with no manual setup.
+Decision: I did not build login, user accounts or per-user data, so every page is open to anyone who can reach the app's port.
+Alternatives considered: Flask sessions with a users table and password hashing, rejected because it adds a table, a secret key to configure and a login flow that I would have to test and defend, none of which a one-user tool needs. A single shared password in an environment variable, rejected because it protects little and would be one more required setting for the container.
+Consequences: The app stays simple and every feature belongs to one of the two domains, but it must only run locally or on a private network. Assignment 2's Azure deployment would need authentication before the app is reachable from the internet.
