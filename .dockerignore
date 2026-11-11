@@ -1,0 +1,16 @@
+.git
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.idea
+data
+*.db
+.env
+.coverage
+htmlcov
+container
+docs
+templates
+static
+tests

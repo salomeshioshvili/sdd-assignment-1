@@ -1,0 +1,72 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-Your_strong_SA_Passw0rd}
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\"",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./db/init.sql:/init.sql:ro
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - |
+        set -e
+        if [ -x /opt/mssql-tools18/bin/sqlcmd ]; then
+          /opt/mssql-tools18/bin/sqlcmd -S db -U sa -P "$$MSSQL_SA_PASSWORD" -C -i /init.sql
+        else
+          /opt/mssql-tools/bin/sqlcmd -S db -U sa -P "$$MSSQL_SA_PASSWORD" -i /init.sql
+        fi
+    environment:
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-Your_strong_SA_Passw0rd}
+    restart: "no"
+
+  log:
+    build: ./services/log
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      PORT: "8001"
+      DATABASE_URL: "mssql+pymssql://log_user:Log_Passw0rd1@db:1433/log_db"
+      GIT_SHA: ${GIT_SHA:-dev}
+    ports:
+      - "8001:8001"
+
+  insights:
+    build: ./services/insights
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      log:
+        condition: service_started
+    environment:
+      PORT: "8002"
+      DATABASE_URL: "mssql+pymssql://insights_user:Insights_Passw0rd1@db:1433/insights_db"
+      LOG_URL: "http://log:8001"
+      LOG_TIMEOUT_S: "2"
+      GIT_SHA: ${GIT_SHA:-dev}
+    ports:
+      - "8002:8002"
+
+volumes:
+  mssql-data:
